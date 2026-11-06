@@ -59,3 +59,10 @@
 - 三个项目各自保留原来的目录结构与构建脚本，未做重排，克隆后可直接按各自 README 构建。
 - 不包含任何构建产物（`.vs/`、`x64/`、`build/`、`output/`）、本机配置（`*.user`）与运行产物（BMP / GDS / 日志）。
 - 例外：`01-circuit-workbench/bin/CircuitWorkbench.exe` 与 `02-verilog-frontend` 下三个 `.exe` 是为方便直接演示而保留的预编译 Windows 程序，源码可用 `build.ps1` / `make` 重新生成。
+
+---
+
+## 许可
+
+本项目以 [MIT License](LICENSE) 发布，欢迎学习与参考。仓库中收录的课程任务文档版权归电子科技大学及课程组所有，不在 MIT 许可范围内，请勿再分发。
+
