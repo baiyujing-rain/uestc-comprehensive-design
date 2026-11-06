@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verilog-frontend:
+    name: Build Verilog front-end
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the three command line tools
+        working-directory: 02-verilog-frontend
+        run: make all
+      - name: Parse a sample circuit
+        working-directory: 02-verilog-frontend
+        run: |
+          ./myverilog_parser.exe test.v | head -n 20
+          ./netlist_to_dot.exe --no-opt test.v /tmp/before.dot
+          ./netlist_to_dot.exe test.v /tmp/after.dot
+          test -s /tmp/before.dot && test -s /tmp/after.dot
+          ./verilog_to_rtlil.exe test.v /tmp/test.rtlil
+          test -s /tmp/test.rtlil
+
+  myplacement:
+    name: Build MyPlacement
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build libx11-dev
+      - name: Configure and build
+        working-directory: 03-myplacement
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+      - name: Run the toy dataset end to end
+        working-directory: 03-myplacement
+        run: |
+          ./build/myplace --fast data/thin1.aux
+          test -f output/legalization_result.bmp
+          test -f output/legalization_result.gds
+      - name: Upload placement artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: myplacement-run
+          path: |
+            03-myplacement/output/*.bmp
+            03-myplacement/output/*.gds
+          retention-days: 7
+          if-no-files-found: ignore

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: myplacement-demo
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./03-myplacement/web/Dockerfile
+    dockerContext: ./03-myplacement
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      - key: MYPLACE_MODE
+        value: fast

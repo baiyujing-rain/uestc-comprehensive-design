@@ -10,6 +10,12 @@
 - 可作为 **Yosys 前端插件**（`read_myverilog`）接入完整综合流程
 - 附带本地可视化面板 `ui_dashboard.html`
 
+同一个 MUX 电路优化前后的网表对比：
+
+| 优化前 | 优化后 |
+| --- | --- |
+| ![优化前](ui_assets/mux_optimization_test_before.png) | ![优化后](ui_assets/mux_optimization_test_after.png) |
+
 课程任务文档见 [`docs/任务描述.pdf`](docs/任务描述.pdf)（任务一～五说明）；课程报告含个人信息，未随仓库发布。
 
 ## 构建

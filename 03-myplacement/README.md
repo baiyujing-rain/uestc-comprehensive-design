@@ -4,6 +4,14 @@
 
 《工业软件创新训练 III / 进阶式挑战性综合项目 III》课程项目。
 
+`adaptec1` 基准（21 万单元 / 22 万网络）的实测结果：
+
+| 全局布局（HPWL 1.41e8） | Abacus 合法化后 |
+| --- | --- |
+| ![全局布局](docs/images/global_placement.png) | ![合法化后](docs/images/legalization.png) |
+
+> 想直接看效果？Web 前端可一键部署到 Render 免费层，见 [`docs/DEPLOY.md`](docs/DEPLOY.md)。
+
 ---
 
 ## 一、功能一览
