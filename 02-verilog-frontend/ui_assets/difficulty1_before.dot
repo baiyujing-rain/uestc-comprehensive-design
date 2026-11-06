@@ -1,0 +1,19 @@
+digraph "difficulty1" {
+  rankdir=LR;
+  graph [fontname="Arial"];
+  node [fontname="Arial"];
+  edge [fontname="Arial"];
+  "a" [shape=oval];
+  "b" [shape=oval];
+  "y" [shape=doublecircle];
+  "t" [shape=ellipse];
+  "const$1" [shape=plaintext,label="1'b1"];
+  "gate$1" [shape=box,label="AND"];
+  "a" -> "gate$1";
+  "const$1" -> "gate$1";
+  "gate$1" -> "t";
+  "gate$2" [shape=box,label="OR"];
+  "t" -> "gate$2";
+  "b" -> "gate$2";
+  "gate$2" -> "y";
+}

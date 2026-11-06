@@ -1,0 +1,49 @@
+1. 编译普通工具
+
+mingw32-make all
+
+
+2. 打印语法树 AST
+
+.\myverilog_parser.exe .\文件名.v
+
+
+3. 生成优化前 DOT
+
+.\netlist_to_dot.exe --no-opt .\文件名.v .\文件名_before.dot
+
+
+4. 生成优化后 DOT
+
+.\netlist_to_dot.exe .\文件名.v .\文件名_after.dot
+
+
+5. 生成优化前 PNG
+
+& "D:\综设II\Graphviz\bin\dot.exe" -Tpng .\文件名_before.dot -o .\文件名_before.png
+
+
+6. 生成优化后 PNG
+
+& "D:\综设II\Graphviz\bin\dot.exe" -Tpng .\文件名_after.dot -o .\文件名_after.png
+
+
+7. 生成 RTLIL
+
+.\verilog_to_rtlil.exe .\文件名.v .\文件名.rtlil
+
+
+8. Ubuntu 下编译 Yosys 前端插件
+
+make plugin
+
+
+9. Ubuntu 下使用自定义前端替代 read_verilog
+
+yosys -m ./myverilog_frontend.so -p "read_myverilog 文件名.v; opt_muxtree; opt_expr; opt; stat"
+
+
+10. Ubuntu 下生成 PNG
+
+dot -Tpng 文件名_before.dot -o 文件名_before.png
+dot -Tpng 文件名_after.dot -o 文件名_after.png

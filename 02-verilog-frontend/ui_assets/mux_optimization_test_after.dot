@@ -1,0 +1,35 @@
+digraph "mux_optimization_test" {
+  rankdir=LR;
+  graph [fontname="Arial"];
+  node [fontname="Arial"];
+  edge [fontname="Arial"];
+  "s" [shape=oval];
+  "t" [shape=oval];
+  "a" [shape=oval];
+  "b" [shape=oval];
+  "c" [shape=oval];
+  "d" [shape=oval];
+  "y" [shape=doublecircle];
+  "same_mux" [shape=ellipse];
+  "a" -> "same_mux";
+  "const_mux" [shape=ellipse];
+  "c" -> "const_mux";
+  "bool_mux" [shape=ellipse];
+  "t" -> "bool_mux";
+  "nested_mux" [shape=ellipse];
+  "gate$1" [shape=box,label="MUX"];
+  "s" -> "gate$1" [label="S"];
+  "a" -> "gate$1" [label="1"];
+  "d" -> "gate$1" [label="0"];
+  "gate$1" -> "nested_mux";
+  "gate$2" [shape=box,label="XOR"];
+  "nested_mux" -> "gate$2";
+  "same_mux" -> "gate$2";
+  "gate$3" [shape=box,label="XOR"];
+  "gate$2" -> "gate$3";
+  "const_mux" -> "gate$3";
+  "gate$4" [shape=box,label="XOR"];
+  "gate$3" -> "gate$4";
+  "bool_mux" -> "gate$4";
+  "gate$4" -> "y";
+}

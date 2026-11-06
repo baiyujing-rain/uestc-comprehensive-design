@@ -1,0 +1,33 @@
+# 操作系统与编辑器杂项
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+
+# 构建产物
+build/
+out/
+x64/
+Debug/
+Release/
+*.obj
+*.pdb
+*.ilk
+*.tlog
+*.idb
+
+# 运行输出
+output/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/

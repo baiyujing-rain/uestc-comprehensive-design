@@ -1,0 +1,64 @@
+PASS AND truth table
+PASS NAND truth table
+PASS OR truth table
+PASS NOR truth table
+PASS XOR truth table
+PASS XNOR truth table
+PASS full adder sum
+PASS full adder carry
+PASS full adder sum
+PASS full adder carry
+PASS AND truth table
+PASS NAND truth table
+PASS OR truth table
+PASS NOR truth table
+PASS XOR truth table
+PASS XNOR truth table
+PASS full adder sum
+PASS full adder carry
+PASS full adder sum
+PASS full adder carry
+PASS AND truth table
+PASS NAND truth table
+PASS OR truth table
+PASS NOR truth table
+PASS XOR truth table
+PASS XNOR truth table
+PASS full adder sum
+PASS full adder carry
+PASS full adder sum
+PASS full adder carry
+PASS AND truth table
+PASS NAND truth table
+PASS OR truth table
+PASS NOR truth table
+PASS XOR truth table
+PASS XNOR truth table
+PASS full adder sum
+PASS full adder carry
+PASS full adder sum
+PASS full adder carry
+PASS NOT truth table
+PASS NOT truth table
+PASS routed full adder end-to-end
+PASS routed full adder end-to-end
+PASS routed full adder end-to-end
+PASS routed full adder end-to-end
+PASS routed full adder end-to-end
+PASS routed full adder end-to-end
+PASS routed full adder end-to-end
+PASS routed full adder end-to-end
+PASS drag preserves routed connectivity
+PASS undo drag
+PASS redo drag
+PASS save UTF-8 document
+PASS reload Chinese document
+PASS netlist roundtrip
+PASS SPICE model export
+PASS malformed file leaves board intact
+PASS floating input rejected
+PASS multiple drivers rejected
+PASS feedback rejected
+PASS junction fan-out
+PASS interior crossing stays disconnected
+63 checks passed

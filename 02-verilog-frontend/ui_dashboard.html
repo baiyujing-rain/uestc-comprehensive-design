@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verilog 前端任务展示面板</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #1d232f;
+      --muted: #687386;
+      --line: #d9dee7;
+      --blue: #1f6feb;
+      --green: #16833a;
+      --red: #b42318;
+      --amber: #946200;
+      --ink: #111827;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      line-height: 1.45;
+    }
+
+    header {
+      height: 64px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    header .meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px 24px 32px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button.active {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: #eef5ff;
+      font-weight: 700;
+    }
+
+    select {
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      padding: 0 10px;
+      color: var(--text);
+      min-width: 250px;
+    }
+
+    section {
+      display: none;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .metric,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .metric .value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .metric .hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel h2,
+    .panel h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .panel p {
+      margin: 0 0 10px;
+      color: var(--muted);
+    }
+
+    .status-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 90px;
+      gap: 10px;
+      align-items: center;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+    }
+
+    .status-row:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-size: 12px;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    .tag.done {
+      color: var(--green);
+      border-color: #bfe3ca;
+      background: #edf8f0;
+    }
+
+    .tag.warn {
+      color: var(--amber);
+      border-color: #eadca5;
+      background: #fff8db;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .flow div {
+      min-height: 58px;
+      border: 1px solid var(--line);
+      background: #fbfcfe;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .image-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    figure {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      overflow: hidden;
+    }
+
+    figure figcaption {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      min-height: 260px;
+      max-height: 560px;
+      object-fit: contain;
+      background: #ffffff;
+      padding: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 9px 8px;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 700;
+      background: #fbfcfe;
+    }
+
+    code,
+    pre {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    pre {
+      background: #101828;
+      color: #f8fafc;
+      border-radius: 8px;
+      padding: 12px;
+      overflow: auto;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .command-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .delta.good {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .grid,
+      .two-col,
+      .image-pair,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+        padding: 12px 16px;
+      }
+
+      main {
+        padding: 16px;
+      }
+
+      .status-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Verilog 前端任务展示面板</h1>
+    <div class="meta">Parser / Optimizer / DOT / Yosys Frontend</div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="tabs">
+        <button class="tab active" data-tab="overview">任务总览</button>
+        <button class="tab" data-tab="opt">优化效果</button>
+        <button class="tab" data-tab="flow">流程与命令</button>
+      </div>
+      <label>
+        <span style="color: var(--muted); font-size: 13px; margin-right: 6px;">测试用例</span>
+        <select id="caseSelect"></select>
+      </label>
+    </div>
+
+    <section id="overview" class="active">
+      <div class="grid">
+        <div class="metric">
+          <div class="label">已完成任务</div>
+          <div class="value">7</div>
+          <div class="hint">词法、语法、优化、RTLIL、DOT、PNG、Yosys 插件</div>
+        </div>
+        <div class="metric">
+          <div class="label">测试用例</div>
+          <div class="value" id="caseCount">0</div>
+          <div class="hint">覆盖表达式、MUX、逻辑重写和综合示例</div>
+        </div>
+        <div class="metric">
+          <div class="label">当前用例门数变化</div>
+          <div class="value" id="totalDelta">0</div>
+          <div class="hint">优化前后 gate 数差值</div>
+        </div>
+        <div class="metric">
+          <div class="label">当前输出</div>
+          <div class="value">PNG</div>
+          <div class="hint">由 DOT 经 Graphviz 生成</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <h2>任务完成情况</h2>
+          <div class="status-list">
+            <div class="status-row">
+              <strong>Verilog 解析器</strong>
+              <span>支持 module、port、wire、assign、表达式和三目 MUX。</span>
+              <span class="tag done">完成</span>
+            </div>
+            <div class="status-row">
+              <strong>AST 构建</strong>
+              <span>ModuleNode、AssignNode、ExprNode、MuxExprNode 形成语法树。</span>
+              <span class="tag done">完成</span>
+            </div>
+            <div class="status-row">
+              <strong>逻辑优化</strong>
+              <span>实现 opt_expr、opt_muxtree、opt_rewrite 风格优化。</span>
+              <span class="tag done">完成</span>
+            </div>
+            <div class="status-row">
+              <strong>网表图绘制</strong>
+              <span>生成优化前后 DOT，并转换为 PNG 对比图。</span>
+              <span class="tag done">完成</span>
+            </div>
+            <div class="status-row">
+              <strong>Yosys 前端</strong>
+              <span>通过 read_myverilog 替代 read_verilog 读取 Verilog 子集。</span>
+              <span class="tag done">完成</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>当前用例摘要</h2>
+          <table>
+            <tbody>
+              <tr><th>文件</th><td id="summaryFile"></td></tr>
+              <tr><th>目标</th><td id="summaryGoal"></td></tr>
+              <tr><th>优化前 gate</th><td id="summaryBefore"></td></tr>
+              <tr><th>优化后 gate</th><td id="summaryAfter"></td></tr>
+              <tr><th>减少数量</th><td id="summaryDelta"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="opt">
+      <div class="panel" style="margin-bottom: 16px;">
+        <h2>优化前后网表图</h2>
+        <p id="optDescription"></p>
+      </div>
+      <div class="image-pair">
+        <figure>
+          <figcaption>
+            <span>优化前</span>
+            <span id="beforeBadge" class="tag warn"></span>
+          </figcaption>
+          <img id="beforeImg" alt="优化前网表图">
+        </figure>
+        <figure>
+          <figcaption>
+            <span>优化后</span>
+            <span id="afterBadge" class="tag done"></span>
+          </figcaption>
+          <img id="afterImg" alt="优化后网表图">
+        </figure>
+      </div>
+
+      <div class="panel" style="margin-top: 16px;">
+        <h2>门数统计</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>类型</th>
+              <th>优化前</th>
+              <th>优化后</th>
+              <th>变化</th>
+            </tr>
+          </thead>
+          <tbody id="gateRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="flow">
+      <div class="panel" style="margin-bottom: 16px;">
+        <h2>核心流程</h2>
+        <div class="flow">
+          <div>.v 输入</div>
+          <div>Lexer</div>
+          <div>Parser</div>
+          <div>AST</div>
+          <div>Optimize</div>
+          <div>DOT / RTLIL</div>
+          <div>PNG / Yosys</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <h2>常用命令</h2>
+          <div class="command-grid">
+            <pre>mingw32-make all</pre>
+            <pre>.\myverilog_parser.exe .\文件名.v</pre>
+            <pre>.\netlist_to_dot.exe --no-opt .\文件名.v .\文件名_before.dot</pre>
+            <pre>.\netlist_to_dot.exe .\文件名.v .\文件名_after.dot</pre>
+            <pre>& "D:\综设II\Graphviz\bin\dot.exe" -Tpng .\文件名_after.dot -o .\文件名_after.png</pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Ubuntu / Yosys 插件</h2>
+          <div class="command-grid">
+            <pre>make plugin</pre>
+            <pre>yosys -m ./myverilog_frontend.so -p "read_myverilog 文件名.v; opt_muxtree; opt_expr; opt; stat"</pre>
+            <pre>dot -Tpng 文件名_after.dot -o 文件名_after.png</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const cases = [
+      {
+        id: "test",
+        label: "综合演示 test.v",
+        file: "test.v",
+        goal: "同时展示 MUX、表达式和逻辑重写的基础效果",
+        description: "该例子是一个综合性小例子，优化前包含一个无效 MUX、两个表达式恒等式和一个吸收律结构。优化器先将 s ? a : a 识别为两个分支相同的 MUX，因此直接替换为 a；再把 (b & 1'b1) | 1'b0 按照 a & 1 = a、a | 0 = a 化简为 b；最后将 a | (a & b) 根据吸收律化简为 a。优化后中间 wire 仍保留用于展示数据流，但原先对应的 MUX、AND、OR 都被删除，只剩最终输出处需要的 XOR 组合。",
+        before: { AND: 2, MUX: 1, OR: 2, XOR: 2 },
+        after: { XOR: 2 },
+        beforeImg: "ui_assets/test_before.png",
+        afterImg: "ui_assets/test_after.png"
+      },
+      {
+        id: "difficulty1",
+        label: "难度 1",
+        file: "difficulty1.v",
+        goal: "非常简单的表达式恒等式优化",
+        description: "该例子用于展示最基础的表达式优化。优化前 t = a & 1'b1 会生成一个 AND 门，但 1'b1 是与运算的单位元，因此表达式等价于 a。优化器在 AST 上直接把 t 的右侧替换为 a，后续生成网表时不再产生这个 AND 门。最终输出 y = t | b 仍然保留 OR 结构，所以优化后网表只剩一个 OR 门，适合作为最简单的入门示例。",
+        before: { AND: 1, OR: 1 },
+        after: { OR: 1 },
+        beforeImg: "ui_assets/difficulty1_before.png",
+        afterImg: "ui_assets/difficulty1_after.png"
+      },
+      {
+        id: "difficulty2",
+        label: "难度 2",
+        file: "difficulty2.v",
+        goal: "中等规模：MUX、表达式、吸收律和因子提取",
+        description: "该例子用于展示中等规模的多类优化协同。优化前 mux_keep 中存在相同选择信号的嵌套 MUX，经过多级 MUX 优化后会减少一层选择逻辑；expr_keep 中的 b ^ b 恒为 0，随后 0 | c 化简为 c，再与 1'b1 做 AND 时继续化简为 c；rewrite_keep 中的 a | (a & d) 符合吸收律，直接化简为 a；factor_keep 中的 (a & b) | (a & c) 通过公共因子提取变为 a & (b | c)。因此优化后 AND、OR、MUX 数量都会明显下降。",
+        before: { AND: 4, MUX: 2, OR: 3, XOR: 4 },
+        after: { AND: 1, MUX: 1, OR: 1, XOR: 3 },
+        beforeImg: "ui_assets/difficulty2_before.png",
+        afterImg: "ui_assets/difficulty2_after.png"
+      },
+      {
+        id: "difficulty3",
+        label: "难度 3",
+        file: "difficulty3.v",
+        goal: "较复杂但可读：嵌套 MUX、CSE、表达式优化和重写",
+        description: "该例子用于展示较完整的优化链路，但规模控制在仍可阅读的范围内。nested_mux 中的 s ? (s ? a : b) : (s ? c : d) 会被多级 MUX 优化压缩为 s ? a : d；bool_mux 中的 t ? 1'b1 : 1'b0 属于布尔型 MUX，可直接替换为 t；expr_a 中的 b & 1'b1、x | 0、c ^ c 会触发表达式恒等式和常量折叠；rewrite_a 中的 ~(a & e) 会被德摩根律改写为 ~a | ~e，同时 d & 0 被删除；rewrite_b 中的 (a & b) | (a & d) 会提取公共因子。shared1 和 shared2 中重复出现的 (a & b) ^ (c | d) 在生成网表时会复用，避免重复生成相同子电路。",
+        before: { AND: 7, MUX: 4, NOT: 1, OR: 5, XOR: 10 },
+        after: { AND: 2, MUX: 1, NOT: 2, OR: 3, XOR: 7 },
+        beforeImg: "ui_assets/difficulty3_before.png",
+        afterImg: "ui_assets/difficulty3_after.png"
+      },
+      {
+        id: "expr_optimization_test",
+        label: "表达式优化专项",
+        file: "expr_optimization_test.v",
+        goal: "常量折叠、恒等式化简和 a^1 到 ~a",
+        description: "该专项只针对 opt_expr 风格的表达式优化。w_keep_a 的 (a & 1'b1) | 1'b0 会分两步化简：先将 a & 1'b1 替换为 a，再将 a | 1'b0 替换为 a；w_keep_c 的 (b ^ b) | (c & c) 中，b ^ b 恒为 0，c & c 等价于 c，因此整体变为 c；w_invert_a 的 a ^ 1'b1 根据异或恒等式转换为 ~a。优化前需要多个 AND、OR、XOR 门，优化后只保留必要的 AND、OR 和一个 NOT。",
+        before: { AND: 3, OR: 3, XOR: 2 },
+        after: { AND: 1, NOT: 1, OR: 1 },
+        beforeImg: "ui_assets/expr_optimization_test_before.png",
+        afterImg: "ui_assets/expr_optimization_test_after.png"
+      },
+      {
+        id: "mux_optimization_test",
+        label: "MUX 优化专项",
+        file: "mux_optimization_test.v",
+        goal: "常量 MUX、相同分支 MUX、布尔 MUX、嵌套 MUX",
+        description: "该专项只针对 opt_muxtree 风格的多级 MUX 优化。same_mux 中 s ? a : a 的两个分支完全相同，选择信号 s 不影响结果，因此 MUX 被删除；const_mux 中选择条件为 1'b0，结果必然来自 false 分支 c；bool_mux 中 t ? 1'b1 : 1'b0 等价于选择信号 t 本身；nested_mux 中外层和内层都使用 s 作为选择信号，重复判断可以合并，原本三层相关 MUX 被压缩为 s ? a : d。优化后 MUX 数量从 6 个降到 1 个。",
+        before: { MUX: 6, XOR: 3 },
+        after: { MUX: 1, XOR: 3 },
+        beforeImg: "ui_assets/mux_optimization_test_before.png",
+        afterImg: "ui_assets/mux_optimization_test_after.png"
+      },
+      {
+        id: "rewrite_optimization_test",
+        label: "逻辑重写专项",
+        file: "rewrite_optimization_test.v",
+        goal: "德摩根律、吸收律、公共因子提取和双重取反",
+        description: "该专项只针对 opt_rewrite 风格的逻辑重写。demorgan_and 中的 ~(a & b) 通过德摩根律改写为 ~a | ~b，demorgan_or 中的 ~(c | d) 改写为 ~c & ~d；absorb_or 的 a | (a & c) 和 absorb_and 的 b & (b | d) 分别满足吸收律，可直接化简为 a 和 b；factor_out 中的 (a & c) | (a & d) 两项都含有公共因子 a，因此被重写为 a & (c | d)；double_not 中的 ~~c 通过双重取反消除化简为 c。优化后整体 AND 和 OR 数量减少，逻辑结构更规整。",
+        before: { AND: 5, NOT: 4, OR: 4, XOR: 5 },
+        after: { AND: 2, NOT: 4, OR: 2, XOR: 5 },
+        beforeImg: "ui_assets/rewrite_optimization_test_before.png",
+        afterImg: "ui_assets/rewrite_optimization_test_after.png"
+      }
+    ];
+
+    const gateTypes = ["AND", "MUX", "NOT", "OR", "XOR"];
+    const select = document.getElementById("caseSelect");
+    const tabs = document.querySelectorAll(".tab");
+    const sections = document.querySelectorAll("section");
+
+    function total(map) {
+      return Object.values(map).reduce((sum, value) => sum + value, 0);
+    }
+
+    function renderCase(item) {
+      const beforeTotal = total(item.before);
+      const afterTotal = total(item.after);
+      const delta = beforeTotal - afterTotal;
+
+      document.getElementById("caseCount").textContent = cases.length;
+      document.getElementById("totalDelta").textContent = delta;
+      document.getElementById("summaryFile").textContent = item.file;
+      document.getElementById("summaryGoal").textContent = item.goal;
+      document.getElementById("summaryBefore").textContent = beforeTotal;
+      document.getElementById("summaryAfter").textContent = afterTotal;
+      document.getElementById("summaryDelta").innerHTML = `<span class="delta good">-${delta}</span>`;
+      document.getElementById("optDescription").textContent = item.description;
+
+      document.getElementById("beforeImg").src = item.beforeImg;
+      document.getElementById("afterImg").src = item.afterImg;
+      document.getElementById("beforeBadge").textContent = `${beforeTotal} gates`;
+      document.getElementById("afterBadge").textContent = `${afterTotal} gates`;
+
+      const rows = gateTypes.map(type => {
+        const before = item.before[type] || 0;
+        const after = item.after[type] || 0;
+        const change = after - before;
+        const text = change < 0 ? `${change}` : change > 0 ? `+${change}` : "0";
+        const cls = change < 0 ? "delta good" : "";
+        return `<tr>
+          <td>${type}</td>
+          <td>${before}</td>
+          <td>${after}</td>
+          <td class="${cls}">${text}</td>
+        </tr>`;
+      }).join("");
+      document.getElementById("gateRows").innerHTML = rows;
+    }
+
+    cases.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = item.label;
+      select.appendChild(option);
+    });
+
+    select.addEventListener("change", () => {
+      const item = cases.find(entry => entry.id === select.value);
+      renderCase(item);
+    });
+
+    tabs.forEach(button => {
+      button.addEventListener("click", () => {
+        tabs.forEach(tab => tab.classList.remove("active"));
+        sections.forEach(section => section.classList.remove("active"));
+        button.classList.add("active");
+        document.getElementById(button.dataset.tab).classList.add("active");
+      });
+    });
+
+    renderCase(cases[0]);
+  </script>
+</body>
+</html>

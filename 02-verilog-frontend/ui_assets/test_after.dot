@@ -1,0 +1,23 @@
+digraph "test" {
+  rankdir=LR;
+  graph [fontname="Arial"];
+  node [fontname="Arial"];
+  edge [fontname="Arial"];
+  "s" [shape=oval];
+  "a" [shape=oval];
+  "b" [shape=oval];
+  "y" [shape=doublecircle];
+  "mux_out" [shape=ellipse];
+  "a" -> "mux_out";
+  "expr_out" [shape=ellipse];
+  "b" -> "expr_out";
+  "rewrite_out" [shape=ellipse];
+  "a" -> "rewrite_out";
+  "gate$1" [shape=box,label="XOR"];
+  "mux_out" -> "gate$1";
+  "expr_out" -> "gate$1";
+  "gate$2" [shape=box,label="XOR"];
+  "gate$1" -> "gate$2";
+  "rewrite_out" -> "gate$2";
+  "gate$2" -> "y";
+}
