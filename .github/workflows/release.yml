@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Package the Windows command line tools
+        working-directory: 02-verilog-frontend
+        run: |
+          zip -j "$RUNNER_TEMP/verilog-frontend-win64.zip" \
+            myverilog_parser.exe netlist_to_dot.exe verilog_to_rtlil.exe
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }} · 综合设计 I/II/III 源码与工具
+          draft: false
+          prerelease: false
+          body: |
+            ## 交付内容
+
+            | 附件 | 说明 |
+            | --- | --- |
+            | `CircuitWorkbench.exe` | 综合设计 I · 电路工作台（Windows x64，双击即用） |
+            | `verilog-frontend-win64.zip` | 综合设计 II · `myverilog_parser` / `netlist_to_dot` / `verilog_to_rtlil` 三个命令行工具 |
+            | Source code | 本 tag 的完整源码（GitHub 自动生成） |
+
+            ## 快速开始
+
+            ```bash
+            # 综合设计 II：生成优化前 / 后的 DOT 网表
+            netlist_to_dot.exe --no-opt test.v before.dot
+            netlist_to_dot.exe test.v after.dot
+            ```
+
+            综合设计 III 的 MyPlacement 需在 Linux / WSL 下编译（CImg 依赖 X11），见 `03-myplacement/README.md`；
+            Web 演示可按 `render.yaml` 一键部署到 Render。
+
+            ## 说明
+
+            - 三个项目均可从源码构建，步骤见各目录 README。
+            - 课程报告因含个人信息未收录，仓库只保留任务书类文档。
+            - 本项目以 MIT 许可发布。
+          files: |
+            01-circuit-workbench/bin/CircuitWorkbench.exe
+            ${{ runner.temp }}/verilog-frontend-win64.zip
